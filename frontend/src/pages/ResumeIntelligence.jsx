@@ -112,118 +112,126 @@ const ResumeIntelligence = () => {
     };
 
     return (
-        <div className="max-w-5xl mx-auto space-y-12 pb-12">
+        <div className="p-10 lg:p-14 max-w-5xl mx-auto space-y-12 pb-12">
             <header className="text-center space-y-6">
-                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-[10px] font-bold tracking-[0.2em] uppercase">
+                <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold tracking-[0.2em] uppercase">
                     <Sparkles className="w-3.5 h-3.5 mr-2" />
                     Neural CV Synthesis
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                    Is your resume <span className="text-indigo-600">Placement Ready?</span>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                    Is your resume <span className="text-indigo-400">Placement Ready?</span>
                 </h1>
-                <p className="text-gray-500 text-lg max-w-2xl mx-auto font-medium">
+                <p className="text-gray-400 text-lg max-w-2xl mx-auto font-medium">
                     Our AI scans 16 critical compliance vectors to ensure you bypass ATS filters and land interview callbacks.
                 </p>
             </header>
 
             {!result ? (
-                <div className="premium-card p-1 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gray-50">
-                        {loading && <div className="h-full bg-indigo-600 animate-pulse w-full"></div>}
-                    </div>
+                <div className="space-y-12">
+                    {error && (
+                        <div className="p-6 flex items-center space-x-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-2xl backdrop-blur-md animate-shake">
+                            <AlertCircle className="w-5 h-5 shrink-0" />
+                            <p className="text-sm font-bold uppercase tracking-wide">{error}</p>
+                        </div>
+                    )}
 
-                    <div className="p-10 space-y-8">
-                        {error && (
-                            <div className="p-4 flex items-start bg-red-50 border border-red-100 text-red-600 rounded-2xl">
-                                <AlertCircle className="w-5 h-5 mr-3 shrink-0 mt-0.5" />
-                                <div>
-                                    <h3 className="font-bold text-sm uppercase tracking-wide">Signal Rejected</h3>
-                                    <p className="text-sm mt-1">{error}</p>
+                    <div
+                        className={`relative w-full h-96 rounded-[3rem] border-2 border-dashed flex flex-col items-center justify-center transition-all duration-500 ${dragActive ? 'border-white bg-white/10 scale-[1.02]' : 'border-white/10 bg-white/5 hover:bg-white/[0.08] hover:border-white/20'
+                            } backdrop-blur-xl group cursor-pointer shadow-2xl`}
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                        onClick={onButtonClick}
+                    >
+                        <input
+                            ref={inputRef}
+                            type="file"
+                            className="hidden"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleChange}
+                        />
+
+                        {!file ? (
+                            <div className="text-center space-y-6">
+                                <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-500">
+                                    <UploadCloud className="w-10 h-10 text-white" />
+                                </div>
+                                <h3 className="text-3xl font-black text-white">Drop Identity Document</h3>
+                                <p className="text-gray-400 text-lg font-medium opacity-60">PDF or DOCX (Max 5MB)</p>
+                                <div className="px-8 py-3 bg-white text-black rounded-full text-sm font-black uppercase tracking-widest shadow-xl group-hover:bg-gray-200 transition-colors inline-block">
+                                    Browse Directory
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center w-full px-8 text-center space-y-6">
+                                <div className="w-28 h-28 bg-white/10 rounded-[2.5rem] flex items-center justify-center relative group/file">
+                                    <FileText className="w-14 h-14 text-white" />
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); removeFile(); }}
+                                        className="absolute -top-4 -right-4 bg-white text-black rounded-full p-2.5 hover:bg-rose-500 hover:text-white shadow-2xl transition-all active:scale-90"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                                <h3 className="text-2xl font-black text-white truncate max-w-sm">{file.name}</h3>
+                                <div className="px-6 py-2 rounded-full bg-white/10 text-[10px] font-black text-white uppercase tracking-[0.3em] backdrop-blur-md">
+                                    {(file.size / (1024 * 1024)).toFixed(2)} MB Ready
                                 </div>
                             </div>
                         )}
+                    </div>
 
-                        <div
-                            className={`relative w-full h-80 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center transition-all duration-300 ${dragActive ? 'border-indigo-500 bg-indigo-50/30 scale-[1.01]' : 'border-gray-200 bg-gray-50/30 hover:bg-white hover:border-indigo-300'
-                                }`}
-                            onDragEnter={handleDrag}
-                            onDragLeave={handleDrag}
-                            onDragOver={handleDrag}
-                            onDrop={handleDrop}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-4">
+                        <button
+                            onClick={handleUpload}
+                            disabled={!file || loading}
+                            className="px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-gray-200 disabled:opacity-50 transition-all shadow-2xl hover:scale-105 active:scale-95 flex items-center group"
                         >
-                            <input
-                                ref={inputRef}
-                                type="file"
-                                className="hidden"
-                                accept=".pdf,.doc,.docx"
-                                onChange={handleChange}
-                            />
-
-                            {!file ? (
+                            {loading ? (
                                 <>
-                                    <div className="w-20 h-20 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6">
-                                        <UploadCloud className="w-10 h-10 text-indigo-500" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-gray-900">Drop Identity Document</h3>
-                                    <p className="text-gray-400 mt-2 text-sm font-medium">PDF or DOCX (Max 5MB)</p>
-                                    <button
-                                        onClick={onButtonClick}
-                                        className="mt-8 px-8 py-3 bg-white border border-gray-200 text-slate-700 rounded-xl text-sm font-bold shadow-sm hover:bg-gray-50 transition-all active:scale-95"
-                                    >
-                                        Browse Directory
-                                    </button>
+                                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin mr-3"></div>
+                                    Synthesizing...
                                 </>
                             ) : (
-                                <div className="flex flex-col items-center w-full px-8">
-                                    <div className="w-24 h-24 bg-white rounded-3xl shadow-sm border border-gray-100 flex items-center justify-center mb-6 relative">
-                                        <FileText className="w-12 h-12 text-indigo-500" />
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); removeFile(); }}
-                                            className="absolute -top-3 -right-3 bg-white text-gray-400 border border-gray-200 rounded-full p-2 hover:text-red-500 shadow-md transition-all active:scale-90"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900 truncate max-w-sm">{file.name}</h3>
-                                    <div className="mt-4 px-4 py-1 rounded-full bg-indigo-50 text-[10px] font-black text-indigo-600 uppercase tracking-widest">
-                                        {(file.size / (1024 * 1024)).toFixed(2)} MB Ready
-                                    </div>
-                                </div>
+                                <>
+                                    Initiate Scan
+                                    <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
+                                </>
                             )}
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4 border-t border-gray-50">
-                            <div className="flex items-center text-gray-400 text-xs font-medium">
-                                <CheckCircle2 className="w-4 h-4 mr-2 text-indigo-500" />
-                                Industrial-grade Encryption Enabled
-                            </div>
-                            <button
-                                onClick={handleUpload}
-                                disabled={!file || loading}
-                                className="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-sm hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg shadow-indigo-100 flex items-center group"
-                            >
-                                {loading ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-3"></div>
-                                        Analyzing CV Architecture...
-                                    </>
-                                ) : (
-                                    <>
-                                        Initiate Scan
-                                        <ArrowRight className="w-4 h-4 ml-3 group-hover:translate-x-1 transition-transform" />
-                                    </>
-                                )}
-                            </button>
-                        </div>
+                        </button>
+                        {!loading && file && (
+                            <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.4em] animate-pulse">
+                                Secure Protocol Active
+                            </p>
+                        )}
                     </div>
                 </div>
             ) : (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <ResumeScoreCard
-                        score={result.score}
-                        analysis={result.analysis}
-                        summary={result.summary}
-                    />
+                    {result.isResume === false ? (
+                        <div className="space-y-10 text-center py-24 relative z-10">
+                            <div className="w-24 h-24 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-10 backdrop-blur-md">
+                                <AlertCircle className="w-12 h-12 text-white" />
+                            </div>
+                            <div className="space-y-4">
+                                <h2 className="text-6xl font-black text-white tracking-tighter">Signal Divergence.</h2>
+                                <p className="text-white/40 text-2xl font-medium max-w-2xl mx-auto leading-tight">{result.summary}</p>
+                            </div>
+                            <button 
+                                onClick={removeFile}
+                                className="mt-8 px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-200 transition-all shadow-2xl"
+                            >
+                                Try Another File
+                            </button>
+                        </div>
+                    ) : (
+                        <ResumeScoreCard
+                            score={result.score}
+                            analysis={result.analysis}
+                            summary={result.summary}
+                        />
+                    )}
                 </div>
             )}
 

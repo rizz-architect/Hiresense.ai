@@ -1,11 +1,11 @@
-﻿import React from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { ProtectedRoute } from './components/Layout';
-import Login from './pages/Login';
+import { Layout } from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import ResumeIntelligence from './pages/ResumeIntelligence';
+import ResumeBuilder from './pages/ResumeBuilder';
 import MockInterviewSetup from './pages/MockInterviewSetup';
 import MockInterviewSession from './pages/MockInterviewSession';
 import Landing from './pages/Landing';
@@ -27,18 +27,15 @@ const Placeholder = ({ title }) => (
 );
 
 const AppRoutes = () => {
-  const { user } = useAuth();
-
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
 
-      {/* Protected Layout Routes */}
-      <Route element={<ProtectedRoute />}>
+      {/* Protected Layout Routes - Now accessible to everyone */}
+      <Route element={<Layout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/resume" element={<ResumeIntelligence />} />
-        <Route path="/company" element={<Placeholder title="Company Scan" />} />
+        <Route path="/resume-builder" element={<ResumeBuilder />} />
         <Route path="/mock-interview/setup" element={<MockInterviewSetup />} />
         <Route path="/mock-interview/session" element={<MockInterviewSession />} />
         <Route path="/performance" element={<Placeholder title="Growth Metrics" />} />

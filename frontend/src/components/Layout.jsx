@@ -1,9 +1,8 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, Brain, Building2, Video, Activity } from 'lucide-react';
-import LightPillar from './LightPillar';
-import './LightPillar.css';
+import { LogOut, LayoutDashboard, Brain, Video, Activity, FileText } from 'lucide-react';
+import Grainient from './reactbits/Grainient';
 
 export const ProtectedRoute = () => {
     const { user } = useAuth();
@@ -11,7 +10,7 @@ export const ProtectedRoute = () => {
     return <Layout />;
 };
 
-const Layout = () => {
+export const Layout = () => {
     const { user, logout } = useAuth();
     const location = useLocation();
 
@@ -19,23 +18,33 @@ const Layout = () => {
         <div className="flex min-h-screen bg-[#030303] font-sans text-gray-100 antialiased overflow-hidden relative">
             {/* Immersive Dashboard Background */}
             <div className="fixed inset-0 z-0 opacity-40 pointer-events-none">
-                <LightPillar
-                    topColor="#5227FF"
-                    bottomColor="#FF9FFC"
-                    intensity={1}
-                    rotationSpeed={0.3}
-                    glowAmount={0.002}
-                    pillarWidth={3}
-                    pillarHeight={0.4}
-                    noiseIntensity={0.5}
-                    pillarRotation={25}
-                    interactive={false}
-                    mixBlendMode="screen"
-                    quality="high"
+                <Grainient
+                    color1="#FF9FFC"
+                    color2="#5227FF"
+                    color3="#B497CF"
+                    timeSpeed={0.25}
+                    colorBalance={0}
+                    warpStrength={1}
+                    warpFrequency={5}
+                    warpSpeed={2}
+                    warpAmplitude={50}
+                    blendAngle={0}
+                    blendSoftness={0.05}
+                    rotationAmount={500}
+                    noiseScale={2}
+                    grainAmount={0.1}
+                    grainScale={2}
+                    grainAnimated={false}
+                    contrast={1.5}
+                    gamma={1}
+                    saturation={1}
+                    centerX={0}
+                    centerY={0}
+                    zoom={0.9}
                 />
             </div>
-            {/* Sidebar */}
-            <aside className="fixed inset-y-0 left-0 w-64 bg-black/40 backdrop-blur-xl border-r border-white/5 flex flex-col z-20">
+            {/* Minimalist Sidebar */}
+            <aside className="fixed inset-y-0 left-0 w-64 bg-transparent flex flex-col z-20">
                 <div className="p-6 flex items-center space-x-3 mb-4">
                     <div className="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">H</div>
                     <span className="text-lg font-bold tracking-tight text-white">hiresense<span className="text-indigo-600">.ai</span></span>
@@ -48,13 +57,13 @@ const Layout = () => {
                     </Link>
 
                     <div className="px-4 pt-6 pb-2 text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Preparation</div>
-                    <Link to="/resume" className="flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5">
+                    <Link to="/resume" className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm ${location.pathname === '/resume' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                         <Brain size={18} /> <span>Resume Intel</span>
                     </Link>
-                    <Link to="/company" className="flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5">
-                        <Building2 size={18} /> <span>Company Scan</span>
+                    <Link to="/resume-builder" className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm ${location.pathname === '/resume-builder' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
+                        <FileText size={18} /> <span>Resume Builder</span>
                     </Link>
-                    <Link to="/mock-interview/setup" className="flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm text-gray-400 hover:text-white hover:bg-white/5">
+                    <Link to="/mock-interview/setup" className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all font-semibold text-sm ${location.pathname.startsWith('/mock-interview') ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>
                         <Video size={18} /> <span>AI Proctor</span>
                     </Link>
                 </nav>
@@ -77,10 +86,8 @@ const Layout = () => {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 min-h-screen relative z-10 p-10 lg:p-14 overflow-y-auto">
-                <div className="max-w-6xl mx-auto">
-                    <Outlet />
-                </div>
+            <main className="flex-1 ml-64 min-h-screen relative z-10 overflow-y-auto">
+                <Outlet />
             </main>
         </div>
     );

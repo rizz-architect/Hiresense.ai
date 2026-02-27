@@ -78,6 +78,42 @@ const uploadResume = async (req, res, next) => {
     }
 };
 
+const extractResumeData = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded or invalid format' });
+        }
+
+        const filePath = req.file.path;
+        const mimeType = req.file.mimetype;
+
+        // Extract text
+        const extractedText = await resumeService.extractTextFromFile(filePath, mimeType);
+
+        // Extract structured data using AI
+        const structuredData = await resumeService.extractStructuredData(extractedText);
+
+        // Delete temp file
+        fs.unlink(filePath, (err) => {
+            if (err) console.error(`Failed to delete temp file ${filePath}:`, err);
+        });
+
+        res.status(200).json({
+            success: true,
+            data: structuredData
+        });
+
+    } catch (error) {
+        if (req.file && req.file.path) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error(`Failed to delete temp file ${req.file.path}:`, err);
+            });
+        }
+        next(error);
+    }
+};
+
 module.exports = {
-    uploadResume
+    uploadResume,
+    extractResumeData
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { uploadResume } = require('../controllers/resumeController');
+const { uploadResume, extractResumeData } = require('../controllers/resumeController');
 const { protect } = require('../middleware/authMiddleware');
 const fs = require('fs');
 const path = require('path');
@@ -54,7 +54,8 @@ const uploadMiddleware = (req, res, next) => {
     });
 };
 
-// Route
+// Routes
 router.post('/upload', protect, uploadMiddleware, uploadResume);
+router.post('/extract', protect, uploadMiddleware, extractResumeData);
 
 module.exports = router;

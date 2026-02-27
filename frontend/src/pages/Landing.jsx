@@ -1,17 +1,11 @@
-import React, { useEffect, Suspense, useRef } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import HeroSection from '../components/landing/HeroSection';
 import { useTheme } from '../context/ThemeContext';
-import Login from './Login';
 import Ballpit from '../components/reactbits/Ballpit';
 
 const Landing = () => {
     const { setTheme } = useTheme();
     const [isCinematicActive, setIsCinematicActive] = React.useState(false);
-    const loginRef = useRef(null);
-
-    const scrollToLogin = () => {
-        loginRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
 
     // Force Dark Mode for the Premium Cinematic Experience
     useEffect(() => {
@@ -42,13 +36,8 @@ const Landing = () => {
 
             {/* Main Immersive Hero - Single Section Only */}
             <Suspense fallback={<div className="h-screen bg-black relative z-10 flex items-center justify-center font-black animate-pulse text-indigo-500 tracking-[1em]">SYSTEM_BOOT...</div>}>
-                <HeroSection onCinematicChange={setIsCinematicActive} onLoginClick={scrollToLogin} />
+                <HeroSection onCinematicChange={setIsCinematicActive} />
             </Suspense>
-
-            {/* Additional Sections - Hidden during cinematic transition */}
-            <div ref={loginRef} className={`transition-opacity duration-700 relative z-10 ${isCinematicActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                <Login />
-            </div>
 
             {/* Subtle Texture Overlay */}
             <div className="fixed inset-0 pointer-events-none z-[99] opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>

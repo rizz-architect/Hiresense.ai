@@ -1,122 +1,172 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Timer, MessageSquare, ArrowRight, XCircle, ShieldCheck } from 'lucide-react';
+import { Timer, MessageSquare, ArrowRight, XCircle, ShieldCheck, CheckCircle2, Award } from 'lucide-react';
+
+const MOCK_QUESTIONS = [
+    "Can you elaborate on a challenging technical project you've orchestrated, highlighting your specific contributions to the outcome?",
+    "How do you prioritize your tasks when you're working under pressure with tight deadlines?",
+    "Describe a time you had a conflict with a teammate. How did you resolve it?",
+    "What is your approach to learning new technologies or frameworks you're unfamiliar with?",
+    "Why are you interested in this role and what makes you a unique candidate for our team?"
+];
 
 const MockInterviewSession = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { company, role, type } = location.state || { company: 'General', role: 'Software Engineer', type: 'Mixed' };
 
-    return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-12">
-            {/* Header info */}
-            <header className="flex flex-col sm:flex-row items-center justify-between bg-white p-8 rounded-[2rem] border border-gray-100 shadow-soft">
-                <div className="flex items-center space-x-5">
-                    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-100">
-                        {company.charAt(0)}
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [answer, setAnswer] = useState('');
+    const [isFinished, setIsFinished] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(1500); // 25:00 in seconds
+
+    const handleNext = () => {
+        if (currentQuestionIndex < MOCK_QUESTIONS.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
+            setAnswer('');
+        } else {
+            setIsFinished(true);
+        }
+    };
+
+    if (isFinished) {
+        return (
+            <div className="max-w-4xl mx-auto mt-24 space-y-16 text-center animate-in zoom-in-95 duration-700 relative z-10">
+                <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-10 backdrop-blur-md border border-white/20">
+                    <Award className="w-16 h-16 text-white" />
+                </div>
+                <div className="space-y-6">
+                    <h2 className="text-7xl font-black text-white mb-4 tracking-tighter leading-none">Complete.</h2>
+                    <p className="text-white/40 text-2xl font-medium leading-relaxed max-w-2xl mx-auto">
+                        You have successfully navigated the <span className="text-white font-bold">{company}</span> assessment protocol. Your neural synthesis has been synchronized.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 pt-10 border-t border-white/10">
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Status</div>
+                        <div className="text-white text-3xl font-black">SYNCHRONIZED</div>
                     </div>
-                    <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                            <h2 className="text-2xl font-black text-gray-900 tracking-tight">{company} Interview</h2>
-                            <ShieldCheck className="w-4 h-4 text-teal-600" />
-                        </div>
-                        <p className="text-gray-400 text-xs font-bold uppercase tracking-[0.2em]">{role} • {type} Protocol</p>
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Evaluation</div>
+                        <div className="text-white text-3xl font-black">PENDING...</div>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-8 mt-6 sm:mt-0">
+                <button
+                    onClick={() => navigate('/dashboard')}
+                    className="px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-200 transition-all active:scale-95 shadow-2xl flex items-center justify-center mx-auto"
+                >
+                    Return to Mission Control
+                    <CheckCircle2 className="w-4 h-4 ml-4" />
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="p-10 lg:p-20 max-w-7xl mx-auto space-y-16 pb-24 relative z-10">
+            {/* Minimalist Header */}
+            <header className="flex flex-col sm:flex-row items-center justify-between pb-10 border-b border-white/10">
+                <div className="flex items-center space-x-6">
+                    <div className="w-16 h-16 bg-white/10 rounded-3xl flex items-center justify-center text-white font-black text-3xl backdrop-blur-md">
+                        {company.charAt(0)}
+                    </div>
+                    <div>
+                        <div className="flex items-center space-x-3 mb-1">
+                            <h2 className="text-3xl font-black text-white tracking-tighter">{company}</h2>
+                            <ShieldCheck className="w-5 h-5 text-white/40" />
+                        </div>
+                        <p className="text-white/20 text-[10px] font-black uppercase tracking-[0.4em]">{role} • {type} PROTOCOL</p>
+                    </div>
+                </div>
+
+                <div className="flex items-center space-x-12 mt-8 sm:mt-0">
                     <div className="flex flex-col items-end">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Time Elapsed</span>
-                        <div className="flex items-center text-gray-900 bg-gray-50 px-5 py-2.5 rounded-xl border border-gray-100 shadow-inner">
-                            <Timer className="w-4 h-4 mr-3 text-indigo-600" />
-                            <span className="font-mono font-bold text-lg">25:00</span>
+                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-2">Time Remaining</span>
+                        <div className="flex items-center text-white bg-white/10 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 font-mono font-black text-xl">
+                            <Timer className="w-5 h-5 mr-4 text-white" />
+                            25:00
                         </div>
                     </div>
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="p-3 text-gray-300 hover:text-rose-500 transition-all active:scale-90"
+                        className="p-3 text-white/20 hover:text-white transition-all active:scale-90"
                         title="Quit Protocol"
                     >
-                        <XCircle className="w-8 h-8" />
+                        <XCircle className="w-10 h-10" />
                     </button>
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
                 {/* Left: Question Panel */}
-                <div className="lg:col-span-2 space-y-8">
-                    <div className="premium-card overflow-hidden flex flex-col min-h-[550px]">
-                        <div className="p-6 border-b border-gray-50 flex items-center justify-between bg-gray-50/30">
+                <div className="lg:col-span-7 space-y-12">
+                    <div className="space-y-10">
+                        <div className="flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Active Input Phase</span>
-                                <span className="text-sm font-bold text-gray-900">Question 1 of 5</span>
+                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Question {currentQuestionIndex + 1} of {MOCK_QUESTIONS.length}</span>
                             </div>
-                            <div className="flex gap-1.5">
-                                {[1, 2, 3, 4, 5].map(n => (
-                                    <div key={n} className={`w-10 h-1.5 rounded-full transition-all duration-500 ${n === 1 ? 'bg-indigo-600 scale-x-110' : 'bg-gray-100'}`}></div>
+                            <div className="flex gap-2">
+                                {MOCK_QUESTIONS.map((_, n) => (
+                                    <div key={n} className={`w-12 h-1 rounded-full transition-all duration-700 ${n === currentQuestionIndex ? 'bg-white scale-y-150' : n < currentQuestionIndex ? 'bg-white/40' : 'bg-white/5'}`}></div>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="p-12 flex-grow">
-                            <h3 className="text-3xl font-extrabold text-gray-900 leading-tight mb-10 tracking-tight">
-                                Can you elaborate on a challenging technical project you've orchestrated, highlighting your specific contributions to the outcome?
-                            </h3>
+                        <h3 className="text-5xl font-black text-white leading-none tracking-tighter">
+                            {MOCK_QUESTIONS[currentQuestionIndex]}
+                        </h3>
 
-                            <div className="p-8 bg-indigo-50/50 rounded-3xl border border-indigo-100/50 flex items-start space-x-6">
-                                <div className="text-2xl animate-bounce">💡</div>
-                                <div className="text-sm text-indigo-900 leading-relaxed font-medium">
-                                    <p className="font-black text-[10px] uppercase tracking-widest mb-2 opacity-60">Synthesis Recommendation</p>
-                                    Apply the <span className="text-indigo-600 font-bold">STAR Method</span> (Situation, Task, Action, Result) to maximize cognitive clarity and professional impact in your response.
-                                </div>
+                        <div className="p-10 bg-white/5 rounded-[3rem] border border-white/10 backdrop-blur-md flex items-start space-x-8">
+                            <div className="text-4xl">💡</div>
+                            <div className="space-y-4">
+                                <p className="font-black text-[10px] text-white/20 uppercase tracking-[0.4em]">Strategic recommendation</p>
+                                <p className="text-white/60 text-lg font-medium leading-relaxed">
+                                    Apply the <span className="text-white font-black">STAR Method</span> to maximize cognitive clarity and professional impact in your response.
+                                </p>
                             </div>
-                        </div>
-
-                        <div className="p-8 border-t border-gray-50 bg-gray-50/20">
-                            <button className="flex items-center text-gray-400 font-bold text-xs uppercase tracking-[0.2em] cursor-not-allowed opacity-60">
-                                <MessageSquare className="w-4 h-4 mr-3" />
-                                Voice Feed Acquisition Disabled
-                            </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Right: Answer Input */}
-                <div className="space-y-8">
-                    <div className="premium-card p-8 flex flex-col h-full bg-white">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-6">Neural Response Input</label>
+                <div className="lg:col-span-5 space-y-10">
+                    <div className="flex flex-col space-y-6">
+                        <label className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Neural Response Input</label>
                         <textarea
-                            className="flex-grow w-full p-6 bg-gray-50/50 border border-gray-100 rounded-2xl text-gray-900 font-bold placeholder:text-gray-300 outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 min-h-[350px] resize-none transition-all shadow-inner text-base leading-relaxed"
+                            value={answer}
+                            onChange={(e) => setAnswer(e.target.value)}
+                            className="w-full p-10 bg-white/10 border border-white/20 rounded-[3rem] text-white font-medium placeholder:text-white/10 outline-none focus:bg-white/[0.15] focus:border-white/40 min-h-[450px] resize-none transition-all shadow-2xl text-xl leading-relaxed backdrop-blur-xl"
                             placeholder="Type your strategic response here..."
                         ></textarea>
 
-                        <div className="mt-8 flex items-center justify-between">
+                        <div className="pt-6 flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Character Count</span>
-                                <span className="text-xs font-bold text-gray-900">0 / 500 Threshold</span>
+                                <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Sync Threshold</span>
+                                <span className="text-sm font-black text-white">{answer.length} / 500 CHARS</span>
                             </div>
-                            <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold font-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 flex items-center">
-                                Submit Answer
-                                <ArrowRight className="w-4 h-4 ml-3" />
+                            <button
+                                onClick={handleNext}
+                                disabled={!answer.trim()}
+                                className="px-12 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-200 disabled:opacity-50 transition-all shadow-2xl flex items-center group"
+                            >
+                                {currentQuestionIndex === MOCK_QUESTIONS.length - 1 ? 'Finish Protocol' : 'Next Question'}
+                                <ArrowRight className="w-4 h-4 ml-4" />
                             </button>
                         </div>
                     </div>
 
-                    <div className="bg-gray-900 rounded-3xl p-8 text-white overflow-hidden relative group shadow-2xl">
-                        <div className="relative z-10">
-                            <div className="flex items-center space-x-2 mb-3">
-                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                                <h4 className="font-black text-xs uppercase tracking-widest">Stable Core 1.0</h4>
-                            </div>
-                            <p className="text-gray-400 text-sm leading-relaxed font-medium">
-                                Video and biometric acquisition are currently suspended to maintain data integrity. Please prioritize text-based structured synthesis.
-                            </p>
-                        </div>
-                        <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-gray-800 rounded-full opacity-40 group-hover:scale-125 transition-transform duration-1000"></div>
+                    <div className="p-10 bg-white/5 rounded-[3rem] border border-white/10 backdrop-blur-md flex items-center space-x-6 group">
+                        <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_#10b981]"></div>
+                        <p className="text-white/40 text-xs font-black uppercase tracking-[0.3em]">
+                            Video/Biometric acquisition suspended to maintain data integrity.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
+    );
     );
 };
 

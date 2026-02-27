@@ -1,15 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import GradientText from '../reactbits/GradientText';
 import StarBorder from '../reactbits/StarBorder';
 import ClickSpark from '../reactbits/ClickSpark';
 import ShinyText from '../reactbits/ShinyText';
 const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
 
-const HeroSection = ({ onLoginClick }) => {
+const HeroSection = ({ onCinematicChange }) => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isCinematicActive, setIsCinematicActive] = useState(false);
+
+    const handleGetInside = () => {
+        // Bypass login with a mock user for immediate access
+        const mockUser = {
+            id: 'guest-user-123',
+            name: 'Hiresense Explorer',
+            email: 'explorer@hiresense.ai',
+            picture: 'https://ui-avatars.com/api/?name=Hiresense+Explorer&background=5227FF&color=fff'
+        };
+        const mockToken = 'guest_token_123';
+        login(mockUser, mockToken);
+        navigate('/dashboard');
+    };
 
     return (
         <ClickSpark sparkColor="#7c6fff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500} easing="ease-out" extraScale={1.2}>
@@ -49,18 +64,18 @@ const HeroSection = ({ onLoginClick }) => {
                         className="text-white/40 text-xs font-black uppercase tracking-[0.5em] mb-12 text-center"
                     >
                         career intelligence, redefined.
-                    </motion.p>
+                     </motion.p>
 
                     {/* Auth Panel */}
                     <motion.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7, duration: 1, ease: 'circOut' }}
-                        className="w-full max-w-xs"
+                        className="w-full max-w-sm"
                     >
-                        <StarBorder as="button" onClick={onLoginClick} color="#7c6fff" speed="4s" className="w-full relative overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
-                            <div className="w-full py-2 text-[11px] tracking-[0.2em] font-black uppercase relative z-10 transition-transform active:scale-95 flex items-center justify-center cursor-pointer">
-                                <ShinyText text="Enter Hiresense" disabled={false} speed={3} className="text-white hover:text-[#FF9FFC] transition-colors duration-300 drop-shadow-md cursor-pointer" />
+                        <StarBorder as="button" onClick={handleGetInside} color="#7c6fff" speed="4s" className="w-full relative overflow-hidden group hover:scale-[1.05] transition-transform duration-300">
+                            <div className="w-full py-3 px-8 text-[12px] tracking-[0.3em] font-black uppercase relative z-10 transition-transform active:scale-95 flex items-center justify-center cursor-pointer">
+                                <ShinyText text="Get Inside" disabled={false} speed={3} className="text-white hover:text-[#FF9FFC] transition-colors duration-300 drop-shadow-md cursor-pointer" />
                             </div>
                         </StarBorder>
                     </motion.div>

@@ -15,25 +15,12 @@ const MockInterviewSetup = () => {
     useEffect(() => {
         const checkAccess = async () => {
             try {
-                const accessRes = await api.get('/mock-interview/verify-access');
-
-                if (!accessRes.data.allowed) {
-                    setError(accessRes.data.message || 'Complete assessment with score ≥ 7 to unlock interview.');
-                    setLoading(false);
-                    return;
-                }
-
-                try {
-                    const latestRes = await api.get('/mock-interview/latest-passed');
-                    setCompany(latestRes.data.companyName);
-                } catch (err) {
-                    setCompany('General Core');
-                }
-
+                // Bypass access verification as requested
+                setCompany('General Core');
                 setLoading(false);
             } catch (err) {
                 console.error(err);
-                setError('Failed to verify access permissions. Please try again.');
+                setError('Failed to initialize session. Please try again.');
                 setLoading(false);
             }
         };
@@ -61,15 +48,15 @@ const MockInterviewSetup = () => {
 
     if (error) {
         return (
-            <div className="max-w-md mx-auto mt-12 premium-card p-10 text-center animate-in zoom-in-95 duration-500">
-                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <AlertCircle className="w-8 h-8 text-red-500" />
+            <div className="max-w-md mx-auto mt-24 space-y-8 text-center animate-in zoom-in-95 duration-500 relative z-10">
+                <div className="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-10 backdrop-blur-md">
+                    <AlertCircle className="w-10 h-10 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2 tracking-tight">Access Locked</h2>
-                <p className="text-gray-500 mb-8 font-medium leading-relaxed">{error}</p>
+                <h2 className="text-4xl font-black text-white mb-4 tracking-tighter">Access Locked.</h2>
+                <p className="text-white/40 mb-12 font-medium leading-relaxed">{error}</p>
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-gray-200"
+                    className="w-full py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-200 transition-all active:scale-95 shadow-2xl"
                 >
                     Return to Mission Control
                 </button>
@@ -78,80 +65,77 @@ const MockInterviewSetup = () => {
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8 pb-12">
-            <header className="flex flex-col">
-                <div className="flex items-center space-x-3 mb-2">
-                    <div className="p-2 bg-indigo-50 rounded-lg">
-                        <Briefcase className="w-5 h-5 text-indigo-600" />
+        <div className="p-10 lg:p-20 max-w-2xl mx-auto space-y-16 pb-24 relative z-10">
+            <header className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-4 mb-2">
+                    <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md">
+                        <Briefcase className="w-6 h-6 text-white" />
                     </div>
-                    <span className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em]">Module Configuration</span>
+                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Protocol Setup</span>
                 </div>
-                <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">AI Proctor Setup</h1>
-                <p className="text-gray-500 mt-2 text-base font-medium">Configure your session parameters for the high-pressure protocol.</p>
+                <h1 className="text-6xl font-black text-white tracking-tighter leading-none">AI Proctor</h1>
+                <p className="text-white/40 text-lg font-medium max-w-md">Configure your session parameters for the high-pressure assessment protocol.</p>
             </header>
 
-            <div className="premium-card overflow-hidden">
-                <div className="p-8 space-y-8">
-                    {/* Company Field (Auto-filled) */}
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center">
-                            <Building2 className="w-4 h-4 mr-2" /> Target Environment
-                        </label>
-                        <input
-                            type="text"
-                            value={company}
-                            disabled
-                            className="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl text-gray-900 font-bold cursor-not-allowed opacity-80"
-                        />
-                        <p className="text-[10px] text-gray-400 font-medium">Auto-derived from latest successful assessment.</p>
-                    </div>
+            <div className="space-y-12">
+                {/* Company Field (Auto-filled) */}
+                <div className="space-y-4">
+                    <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] flex items-center">
+                        <Building2 className="w-4 h-4 mr-3" /> Target Environment
+                    </label>
+                    <input
+                        type="text"
+                        value={company}
+                        disabled
+                        className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-[2rem] text-white/40 font-black cursor-not-allowed backdrop-blur-md"
+                    />
+                </div>
 
-                    {/* Role Dropdown */}
-                    <div className="space-y-3">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest flex items-center">
-                            <UserCircle className="w-4 h-4 mr-2" /> Persona Alignment
-                        </label>
-                        <select
-                            value={role}
-                            onChange={(e) => setRole(e.target.value)}
-                            className="w-full px-4 py-4 bg-white border border-gray-200 rounded-xl text-gray-900 font-bold focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 outline-none transition-all shadow-sm"
-                        >
-                            <option value="Software Engineer">Software Engineer</option>
-                            <option value="Data Analyst">Data Analyst</option>
-                            <option value="Backend Developer">Backend Developer</option>
-                            <option value="Frontend Developer">Frontend Developer</option>
-                        </select>
-                    </div>
+                {/* Role Dropdown */}
+                <div className="space-y-4">
+                    <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] flex items-center">
+                        <UserCircle className="w-4 h-4 mr-3" /> Persona Alignment
+                    </label>
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="w-full px-6 py-5 bg-white/10 border border-white/20 rounded-[2rem] text-white font-black focus:border-white focus:bg-white/20 outline-none transition-all shadow-2xl backdrop-blur-xl appearance-none"
+                    >
+                        <option value="Software Engineer" className="bg-black text-white">Software Engineer</option>
+                        <option value="Data Analyst" className="bg-black text-white">Data Analyst</option>
+                        <option value="Backend Developer" className="bg-black text-white">Backend Developer</option>
+                        <option value="Frontend Developer" className="bg-black text-white">Frontend Developer</option>
+                    </select>
+                </div>
 
-                    {/* Interview Type */}
-                    <div className="space-y-4">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Protocol Type</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            {['General Technical', 'Behavioral', 'Mixed'].map((t) => (
-                                <button
-                                    key={t}
-                                    onClick={() => setType(t)}
-                                    className={`px-4 py-3 rounded-xl border text-xs font-black transition-all uppercase tracking-widest ${type === t
-                                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100'
-                                        : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
-                                        }`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
+                {/* Interview Type */}
+                <div className="space-y-6">
+                    <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Protocol Mode</label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {['General Technical', 'Behavioral', 'Mixed'].map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => setType(t)}
+                                className={`px-6 py-4 rounded-full border text-[10px] font-black transition-all uppercase tracking-[0.2em] backdrop-blur-md ${type === t
+                                    ? 'bg-white border-white text-black shadow-2xl scale-105'
+                                    : 'bg-white/5 border-white/10 text-white/60 hover:border-white/30'
+                                    }`}
+                            >
+                                {t}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                <div className="p-8 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+                <div className="pt-12 flex flex-col sm:flex-row items-center justify-between gap-8 border-t border-white/10">
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Intensity Matrix</span>
-                        <span className="text-xs font-bold text-gray-900">5 Questions • 15 Mins</span>
+                        <span className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Intensity Matrix</span>
+                        <span className="text-sm font-black text-white">5 QUESTIONS • 15 MINS</span>
                     </div>
                     <button
                         onClick={handleStart}
                         disabled={verifying}
-                        className="bg-indigo-600 text-white flex items-center px-10 py-4 rounded-xl font-bold text-sm shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-95 transition-all"
+                        className="px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-200 disabled:opacity-50 transition-all shadow-2xl hover:scale-105 active:scale-95 flex items-center group"
                     >
                         {verifying ? (
                             <>
@@ -161,7 +145,7 @@ const MockInterviewSetup = () => {
                         ) : (
                             <>
                                 Begin Session
-                                <Play className="w-4 h-4 ml-3 fill-current" />
+                                <Play className="w-4 h-4 ml-4 fill-current" />
                             </>
                         )}
                     </button>
