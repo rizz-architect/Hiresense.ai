@@ -7,19 +7,19 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
  * Robust Text Extraction
  * Returns empty string on failure instead of throwing, allowing multimodal AI to take over.
  */
-const extractTextFromFile = async (filePath, mimeType) => {
+const extractTextFromFile = async (fileBuffer, mimeType) => {
     console.log(`[ResumeService] Attempting extraction: ${mimeType}`);
     try {
+        if (!fileBuffer) return "";
+        
         if (mimeType === 'application/pdf') {
-            const dataBuffer = fs.readFileSync(filePath);
-            const data = await pdfParse(dataBuffer);
+            const data = await pdfParse(fileBuffer);
             console.log(`[ResumeService] PDF Parse Success. Length: ${data.text?.length || 0}`);
             return data.text || "";
         } else if (
-            mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-            mimeType === 'application/msword'
+            mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         ) {
-            const result = await mammoth.extractRawText({ path: filePath });
+            const result = await mammoth.extractRawText({ buffer: fileBuffer });
             console.log(`[ResumeService] Word Parse Success. Length: ${result.value?.length || 0}`);
             return result.value || "";
         }
@@ -102,11 +102,10 @@ const analyzeResume = async (text, fileData = null) => {
         `;
 
         let result;
-        if (fileData && fs.existsSync(fileData.path)) {
-            const fileBuffer = fs.readFileSync(fileData.path);
+        if (fileData && fileData.buffer) {
             const part = {
                 inlineData: {
-                    data: fileBuffer.toString('base64'),
+                    data: fileData.buffer.toString('base64'),
                     mimeType: fileData.mimeType
                 }
             };

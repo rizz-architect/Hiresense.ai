@@ -2,36 +2,20 @@ const express = require('express');
 const multer = require('multer');
 const { uploadResume, extractResumeData } = require('../controllers/resumeController');
 const { protect } = require('../middleware/authMiddleware');
-const fs = require('fs');
-const path = require('path');
 
 const router = express.Router();
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure multer for temp storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    }
-});
+// Configure multer for memory storage (Vercel compatible)
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     if (
         file.mimetype === 'application/pdf' ||
-        file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
-        file.mimetype === 'application/msword'
+        file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ) {
         cb(null, true);
     } else {
-        cb(new Error('Only PDF and DOCX files are allowed'), false);
+        cb(new Error('Only PDF and DOCX files are allowed. Legacy .doc is not supported.'), false);
     }
 };
 
@@ -41,7 +25,7 @@ const upload = multer({
     fileFilter
 });
 
-// Apply multer middleware, catching multer errors correctly
+// Apply multer middleware
 const uploadMiddleware = (req, res, next) => {
     const uploader = upload.single('resume');
     uploader(req, res, function (err) {

@@ -9,16 +9,16 @@ const uploadResume = async (req, res, next) => {
         }
 
         const userId = req.user._id;
-        const filePath = req.file.path;
+        const fileBuffer = req.file.buffer;
         const mimeType = req.file.mimetype;
         const originalFileName = req.file.originalname;
-
+ 
         // Extract text
-        const extractedText = await resumeService.extractTextFromFile(filePath, mimeType);
-
+        const extractedText = await resumeService.extractTextFromFile(fileBuffer, mimeType);
+ 
         // Analyze resume (AI Scoring) - Pass fileData for multimodal (image) support
         const analysisResults = await resumeService.analyzeResume(extractedText, {
-            path: filePath,
+            buffer: fileBuffer,
             mimeType: mimeType
         });
 
@@ -53,10 +53,7 @@ const uploadResume = async (req, res, next) => {
             };
         }
 
-        // Delete temp file
-        fs.unlink(filePath, (err) => {
-            if (err) console.error(`Failed to delete temp file ${filePath}:`, err);
-        });
+        // No temp file to delete (Memory Storage)
 
         res.status(201).json({
             success: true,
@@ -68,12 +65,6 @@ const uploadResume = async (req, res, next) => {
         });
 
     } catch (error) {
-        // Ensure temp file is deleted on error
-        if (req.file && req.file.path) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error(`Failed to delete temp file ${req.file.path}:`, err);
-            });
-        }
         next(error);
     }
 };
@@ -84,31 +75,21 @@ const extractResumeData = async (req, res, next) => {
             return res.status(400).json({ message: 'No file uploaded or invalid format' });
         }
 
-        const filePath = req.file.path;
+        const fileBuffer = req.file.buffer;
         const mimeType = req.file.mimetype;
-
+ 
         // Extract text
-        const extractedText = await resumeService.extractTextFromFile(filePath, mimeType);
-
+        const extractedText = await resumeService.extractTextFromFile(fileBuffer, mimeType);
+ 
         // Extract structured data using AI
         const structuredData = await resumeService.extractStructuredData(extractedText);
-
-        // Delete temp file
-        fs.unlink(filePath, (err) => {
-            if (err) console.error(`Failed to delete temp file ${filePath}:`, err);
-        });
-
+ 
         res.status(200).json({
             success: true,
             data: structuredData
         });
-
+ 
     } catch (error) {
-        if (req.file && req.file.path) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) console.error(`Failed to delete temp file ${req.file.path}:`, err);
-            });
-        }
         next(error);
     }
 };
