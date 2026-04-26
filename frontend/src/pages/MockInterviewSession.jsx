@@ -167,7 +167,6 @@ const MockInterviewSession = () => {
             </div>
         </div>
     );
-    );
 };
 
 export default MockInterviewSession;
