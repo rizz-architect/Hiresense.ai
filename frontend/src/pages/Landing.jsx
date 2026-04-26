@@ -35,9 +35,11 @@ const Landing = () => {
             </div>
 
             {/* Main Immersive Hero - Single Section Only */}
-            <Suspense fallback={<div className="h-screen bg-black relative z-10 flex items-center justify-center font-black animate-pulse text-indigo-500 tracking-[1em]">SYSTEM_BOOT...</div>}>
-                <HeroSection onCinematicChange={setIsCinematicActive} />
-            </Suspense>
+            <div className="relative z-10">
+                <Suspense fallback={<div className="h-screen bg-black relative z-10 flex items-center justify-center font-black animate-pulse text-indigo-500 tracking-[1em]">SYSTEM_BOOT...</div>}>
+                    <HeroSection onCinematicChange={setIsCinematicActive} />
+                </Suspense>
+            </div>
 
             {/* Subtle Texture Overlay */}
             <div className="fixed inset-0 pointer-events-none z-[99] opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>

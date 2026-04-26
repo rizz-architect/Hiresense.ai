@@ -13,7 +13,8 @@ const HeroSection = ({ onCinematicChange }) => {
     const { login } = useAuth();
     const [isCinematicActive, setIsCinematicActive] = useState(false);
 
-    const handleGetInside = () => {
+    const handleGetInside = (e) => {
+        if (e) e.stopPropagation();
         // Bypass login with a mock user for immediate access
         const mockUser = {
             id: 'guest-user-123',
@@ -28,7 +29,7 @@ const HeroSection = ({ onCinematicChange }) => {
 
     return (
         <ClickSpark sparkColor="#7c6fff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500} easing="ease-out" extraScale={1.2}>
-            <section className="relative min-h-[100vh] flex flex-col pt-10">
+            <section className="relative min-h-[100vh] flex flex-col pt-10 z-10">
 
 
                 {/* Background Layer: Ballpit is now hosted in Landing.jsx */}
@@ -50,7 +51,7 @@ const HeroSection = ({ onCinematicChange }) => {
                             animationSpeed={isCinematicActive ? 0 : 6}
                             showBorder={false}
                             yoyo={true}
-                            className="text-7xl md:text-8xl font-black tracking-tight leading-none relative z-10"
+                            className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-none relative z-10"
                         >
                             Hiresense
                         </GradientText>
@@ -61,7 +62,7 @@ const HeroSection = ({ onCinematicChange }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.3, duration: 1 }}
-                        className="text-white/40 text-xs font-black uppercase tracking-[0.5em] mb-12 text-center"
+                        className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] md:tracking-[0.5em] mb-8 md:mb-12 text-center"
                     >
                         career intelligence, redefined.
                      </motion.p>
@@ -71,10 +72,10 @@ const HeroSection = ({ onCinematicChange }) => {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.7, duration: 1, ease: 'circOut' }}
-                        className="w-full max-w-sm"
+                        className="w-full max-w-[280px] sm:max-w-sm"
                     >
-                        <StarBorder as="button" onClick={handleGetInside} color="#7c6fff" speed="4s" className="w-full relative overflow-hidden group hover:scale-[1.05] transition-transform duration-300">
-                            <div className="w-full py-3 px-8 text-[12px] tracking-[0.3em] font-black uppercase relative z-10 transition-transform active:scale-95 flex items-center justify-center cursor-pointer">
+                        <StarBorder as="button" onClick={handleGetInside} color="#7c6fff" speed="4s" className="w-full relative overflow-hidden group hover:scale-[1.05] active:scale-95 transition-all duration-300">
+                            <div className="w-full py-4 md:py-3 px-6 md:px-8 text-[10px] md:text-[12px] tracking-[0.2em] md:tracking-[0.3em] font-black uppercase relative z-10 flex items-center justify-center cursor-pointer">
                                 <ShinyText text="Get Inside" disabled={false} speed={3} className="text-white hover:text-[#FF9FFC] transition-colors duration-300 drop-shadow-md cursor-pointer" />
                             </div>
                         </StarBorder>
