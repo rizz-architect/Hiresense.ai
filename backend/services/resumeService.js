@@ -59,7 +59,13 @@ const analyzeResume = async (text, fileData = null) => {
             detailedAnalysis: {
                 categories: { content: contentScore, sections: sectionScore, ats: atsScore, tailoring: tailoringScore },
                 strengths: ["Standard structure detected", "Contact information verified"],
-                weaknesses: [{ area: "Quantifiable Results", priority: "High", fix: "Add metrics like 'Increased efficiency by 20%'" }],
+                deductions: [
+                    { reason: "Missing Quantifiable Metrics", pointsLost: 15, fix: "Add metrics like 'Increased efficiency by 20%'" },
+                    { reason: "Generic Summary Section", pointsLost: 10, fix: "Tailor your summary to specific job roles." }
+                ],
+                personalizedEdits: [
+                    { originalText: "Worked on various projects.", suggestedEdit: "Led 5+ software projects from conception to deployment, achieving 98% uptime.", why: "Adds specificity and measurable impact." }
+                ],
                 checks: [
                     { name: "ATS Compatibility", passed: true, priority: "High", feedback: "Clean layout verified", companyExpectation: "Machine-readable text" },
                     { name: "Impact Density", passed: hasImpact, priority: "High", feedback: hasImpact ? "Found metrics" : "No numbers found", companyExpectation: "Evidence-based results" },
@@ -81,8 +87,14 @@ const analyzeResume = async (text, fileData = null) => {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
         const promptText = `
-        You are an elite Industrial ATS Auditor. Analyze the provided resume.
-        TASK: Return a strict JSON analysis.
+        You are an elite industrial ATS Auditor and Career Coach. Analyze the provided resume with extreme precision.
+        
+        TASK: 
+        1. Evaluate the resume across Content, Structure, ATS Compatibility, and Industry Alignment.
+        2. Assign a score (0-100). Be strict. 100 is reserved for perfect, FAANG-level resumes.
+        3. Identify EXACTLY why marks were reduced (Deductions).
+        4. Provide personalized "before/after" text edits for the user.
+        
         If it's NOT a resume (e.g., photo, certificate), set isResume: false.
         
         JSON SCHEMA:
@@ -94,11 +106,15 @@ const analyzeResume = async (text, fileData = null) => {
             "detailedAnalysis": {
                 "categories": { "content": number, "sections": number, "ats": number, "tailoring": number },
                 "strengths": [string],
-                "weaknesses": [{"area": string, "priority": "High"|"Medium", "fix": string}],
+                "deductions": [{"reason": string, "pointsLost": number, "fix": string}],
+                "personalizedEdits": [{"originalText": string, "suggestedEdit": string, "why": string}],
                 "checks": [{"name": string, "passed": boolean, "feedback": string, "companyExpectation": string}],
                 "industryAlignment": number
             }
         }
+
+        Example of a deduction: {"reason": "Lack of quantifiable metrics in experience section", "pointsLost": 15, "fix": "Add numbers, percentages, or dollar amounts to your bullet points."}
+        Example of personalizedEdit: {"originalText": "Responsible for managing a team.", "suggestedEdit": "Orchestrated a cross-functional team of 10, delivering projects 15% ahead of schedule.", "why": "The original is passive. The edit uses action verbs and quantifiable results."}
         `;
 
         let result;

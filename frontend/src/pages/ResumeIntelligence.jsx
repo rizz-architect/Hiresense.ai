@@ -79,6 +79,22 @@ const ResumeIntelligence = () => {
         setResult(null);
     };
 
+    const [loadingStep, setLoadingStep] = useState(0);
+    const analysisSteps = ["Scanning Document...", "Vectorizing Context...", "Running AI Audit...", "Finalizing Score..."];
+
+    useEffect(() => {
+        let interval;
+        if (loading) {
+            setLoadingStep(0);
+            interval = setInterval(() => {
+                setLoadingStep(prev => (prev + 1) % analysisSteps.length);
+            }, 2000);
+        } else {
+            setLoadingStep(0);
+        }
+        return () => clearInterval(interval);
+    }, [loading]);
+
     const handleUpload = async () => {
         if (!file) return;
 
@@ -186,13 +202,13 @@ const ResumeIntelligence = () => {
                         <button
                             onClick={handleUpload}
                             disabled={!file || loading}
-                            className="px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-gray-200 disabled:opacity-50 transition-all shadow-2xl hover:scale-105 active:scale-95 flex items-center group"
+                            className="px-16 py-5 bg-white text-black rounded-full font-black text-xs uppercase tracking-[0.2em] hover:bg-gray-200 disabled:opacity-50 transition-all shadow-2xl hover:scale-105 active:scale-95 flex items-center group relative overflow-hidden"
                         >
                             {loading ? (
-                                <>
-                                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin mr-3"></div>
-                                    Synthesizing...
-                                </>
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                                    <span className="animate-pulse">{analysisSteps[loadingStep]}</span>
+                                </div>
                             ) : (
                                 <>
                                     Initiate Scan

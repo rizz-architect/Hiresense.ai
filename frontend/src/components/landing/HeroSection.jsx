@@ -1,21 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import GradientText from '../reactbits/GradientText';
-import StarBorder from '../reactbits/StarBorder';
-import ClickSpark from '../reactbits/ClickSpark';
-import ShinyText from '../reactbits/ShinyText';
-const companyNames = ['Google', 'Amazon', 'Meta', 'Microsoft', 'Apple', 'Netflix', 'Spotify', 'Uber', 'Airbnb', 'Stripe', 'Notion', 'Figma'];
+import { Globe, ArrowRight } from 'lucide-react';
 
-const HeroSection = ({ onCinematicChange }) => {
+const HeroSection = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const [isCinematicActive, setIsCinematicActive] = useState(false);
+    const videoRef = useRef(null);
+    const fadeAnimRef = useRef(null);
+    const fadingOutRef = useRef(false);
 
-    const handleGetInside = (e) => {
-        if (e) e.stopPropagation();
-        // Bypass login with a mock user for immediate access
+    const handleGetInside = () => {
         const mockUser = {
             id: 'guest-user-123',
             name: 'Hiresense Explorer',
@@ -27,77 +22,117 @@ const HeroSection = ({ onCinematicChange }) => {
         navigate('/dashboard');
     };
 
+    const animateOpacity = (target, duration) => {
+        if (!videoRef.current) return;
+        if (fadeAnimRef.current) cancelAnimationFrame(fadeAnimRef.current);
+        
+        const startTime = performance.now();
+        const startOpacity = parseFloat(videoRef.current.style.opacity) || 0;
+
+        const animate = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const currentOpacity = startOpacity + (target - startOpacity) * progress;
+            
+            if (videoRef.current) {
+                videoRef.current.style.opacity = currentOpacity;
+            }
+
+            if (progress < 1) {
+                fadeAnimRef.current = requestAnimationFrame(animate);
+            }
+        };
+
+        fadeAnimRef.current = requestAnimationFrame(animate);
+    };
+
+    useEffect(() => {
+        const video = videoRef.current;
+        if (!video) return;
+
+        video.style.opacity = 0;
+
+        const handleTimeUpdate = () => {
+            if (!video.duration) return;
+            const timeLeft = video.duration - video.currentTime;
+            if (timeLeft <= 0.55 && !fadingOutRef.current) {
+                fadingOutRef.current = true;
+                animateOpacity(0, 500);
+            }
+        };
+
+        const handleEnded = () => {
+            video.currentTime = 0;
+            video.play();
+            fadingOutRef.current = false;
+            animateOpacity(1, 500);
+        };
+
+        const handleLoadedData = () => {
+            video.play().catch(() => {});
+            animateOpacity(1, 500);
+        };
+
+        video.addEventListener('timeupdate', handleTimeUpdate);
+        video.addEventListener('ended', handleEnded);
+        video.addEventListener('loadeddata', handleLoadedData);
+
+        return () => {
+            video.removeEventListener('timeupdate', handleTimeUpdate);
+            video.removeEventListener('ended', handleEnded);
+            video.removeEventListener('loadeddata', handleLoadedData);
+            if (fadeAnimRef.current) cancelAnimationFrame(fadeAnimRef.current);
+        };
+    }, []);
+
     return (
-        <ClickSpark sparkColor="#7c6fff" sparkSize={12} sparkRadius={20} sparkCount={8} duration={500} easing="ease-out" extraScale={1.2}>
-            <section className="relative min-h-[100vh] flex flex-col pt-10 z-10">
-
-
-                {/* Background Layer: Ballpit is now hosted in Landing.jsx */}
-
-                <style>{`@keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-
-                {/* ── HERO BODY ── */}
-                <div className={`relative z-10 flex-1 flex flex-col items-center justify-center px-6 pt-10 pb-36 gap-0 transition-opacity duration-500 ${isCinematicActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-
-                    {/* BIG: Hiresense with animated gradient */}
-                    <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, ease: 'circOut' }}
-                        className="mb-4 text-center w-full relative"
-                    >
-                        <GradientText
-                            colors={['#5227FF', '#FF9FFC', '#B19EEF']}
-                            animationSpeed={isCinematicActive ? 0 : 6}
-                            showBorder={false}
-                            yoyo={true}
-                            className="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-none relative z-10"
-                        >
-                            Hiresense
-                        </GradientText>
-                    </motion.div>
-
-                    {/* Tagline */}
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3, duration: 1 }}
-                        className="text-white/40 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] md:tracking-[0.5em] mb-8 md:mb-12 text-center"
-                    >
-                        career intelligence, redefined.
-                     </motion.p>
-
-                    {/* Auth Panel */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.7, duration: 1, ease: 'circOut' }}
-                        className="w-full max-w-[280px] sm:max-w-sm"
-                    >
-                        <StarBorder as="button" onClick={handleGetInside} color="#7c6fff" speed="4s" className="w-full relative overflow-hidden group hover:scale-[1.05] active:scale-95 transition-all duration-300">
-                            <div className="w-full py-4 md:py-3 px-6 md:px-8 text-[10px] md:text-[12px] tracking-[0.2em] md:tracking-[0.3em] font-black uppercase relative z-10 flex items-center justify-center cursor-pointer">
-                                <ShinyText text="Get Inside" disabled={false} speed={3} className="text-white hover:text-[#FF9FFC] transition-colors duration-300 drop-shadow-md cursor-pointer" />
-                            </div>
-                        </StarBorder>
-                    </motion.div>
-                </div>
-
-                {/* ── FOOTER TICKER — pinned to bottom ── */}
-                <motion.div
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4, duration: 1.5 }}
-                    className={`absolute bottom-0 left-0 right-0 z-10 pb-8 flex flex-col items-center gap-3 transition-opacity duration-700 ${isCinematicActive ? 'opacity-0' : 'opacity-100'}`}
+        <section className="relative min-h-screen bg-black overflow-hidden flex flex-col font-sans">
+            {/* Background Video */}
+            <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+                <video
+                    ref={videoRef}
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover translate-y-[17%]"
                 >
-                    <p className="text-[8px] font-black uppercase tracking-[0.6em] text-white/20">Trusted by professionals at</p>
-                    <div className="relative overflow-hidden w-full max-w-xl" style={{ maskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)' }}>
-                        <div className="flex gap-10 whitespace-nowrap" style={{ animation: 'scroll-left 28s linear infinite', width: 'max-content' }}>
-                            {[...companyNames, ...companyNames].map((name, i) => (
-                                <span key={i} className="text-white/20 text-[10px] font-black uppercase tracking-[0.25em] flex-shrink-0">{name}</span>
-                            ))}
+                    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_115001_bcdaa3b4-03de-47e7-ad63-ae3e392c32d4.mp4" type="video/mp4" />
+                </video>
+            </div>
+
+            {/* Navigation Bar - Centered Logo Only, high up to avoid girl */}
+            <nav className="relative z-20 px-6 py-8 w-full flex justify-center">
+                <div className="flex items-center gap-3 text-white font-sans font-bold text-xl tracking-[0.2em] uppercase">
+                    <Globe size={20} className="text-white/80" />
+                    <span>Hiresense</span>
+                </div>
+            </nav>
+
+            {/* Hero Content Area - Pushed even HIGHER to avoid the girl's face */}
+            <div className="relative z-10 flex-1 flex flex-col items-center pt-12 px-6 text-center">
+                <h1 
+                    style={{ fontFamily: "'Instrument Serif', serif" }} 
+                    className="italic text-6xl md:text-7xl lg:text-8xl text-white mb-6 tracking-tight whitespace-nowrap"
+                >
+                    Built for the curious.
+                </h1>
+
+                <div className="max-w-xl w-full flex flex-col items-center">
+                    {/* Integrated CTA: The bar is now the button */}
+                    <button 
+                        onClick={handleGetInside}
+                        className="liquid-glass rounded-full px-2 py-2 flex items-center justify-between w-full max-w-sm border border-white/20 group hover:scale-105 transition-all duration-500 shadow-2xl"
+                    >
+                        <span className="pl-6 text-white/90 text-base font-medium">Get In</span>
+                        <div className="bg-white rounded-full p-3 text-black group-hover:bg-gray-100 transition-colors">
+                            <ArrowRight size={20} />
                         </div>
-                    </div>
-                </motion.div>
-            </section>
-        </ClickSpark >
+                    </button>
+                </div>
+            </div>
+
+            {/* Empty Footer to keep the bottom clear for the video content (the girl) */}
+            <div className="pb-24"></div>
+        </section>
     );
 };
 

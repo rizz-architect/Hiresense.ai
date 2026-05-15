@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Timer, MessageSquare, ArrowRight, XCircle, ShieldCheck, CheckCircle2, Award } from 'lucide-react';
+import { Timer, MessageSquare, ArrowRight, XCircle, ShieldCheck, CheckCircle2, Award, Mic, MicOff, Volume2 } from 'lucide-react';
+import { useSpeech } from '../hooks/useSpeech';
 
 const MOCK_QUESTIONS = [
     "Can you elaborate on a challenging technical project you've orchestrated, highlighting your specific contributions to the outcome?",
@@ -19,6 +20,27 @@ const MockInterviewSession = () => {
     const [answer, setAnswer] = useState('');
     const [isFinished, setIsFinished] = useState(false);
     const [timeLeft, setTimeLeft] = useState(1500); // 25:00 in seconds
+
+    const { 
+        isListening, 
+        transcript, 
+        setTranscript, 
+        startListening, 
+        stopListening, 
+        speak,
+        error: speechError 
+    } = useSpeech();
+
+    // Sync transcript to answer
+    React.useEffect(() => {
+        if (transcript) {
+            setAnswer(prev => {
+                const newAnswer = prev.endsWith(' ') || prev === '' ? prev + transcript : prev + ' ' + transcript;
+                return newAnswer;
+            });
+            setTranscript(''); // Clear transcript after syncing to avoid duplicates
+        }
+    }, [transcript, setTranscript]);
 
     const handleNext = () => {
         if (currentQuestionIndex < MOCK_QUESTIONS.length - 1) {
@@ -114,9 +136,18 @@ const MockInterviewSession = () => {
                             </div>
                         </div>
 
-                        <h3 className="text-5xl font-black text-white leading-none tracking-tighter">
-                            {MOCK_QUESTIONS[currentQuestionIndex]}
-                        </h3>
+                        <div className="flex items-center gap-6">
+                            <h3 className="text-5xl font-black text-white leading-none tracking-tighter flex-1">
+                                {MOCK_QUESTIONS[currentQuestionIndex]}
+                            </h3>
+                            <button 
+                                onClick={() => speak(MOCK_QUESTIONS[currentQuestionIndex])}
+                                className="p-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-all active:scale-90"
+                                title="Read Question"
+                            >
+                                <Volume2 className="w-6 h-6 text-white" />
+                            </button>
+                        </div>
 
                         <div className="p-10 bg-white/5 rounded-[3rem] border border-white/10 backdrop-blur-md flex items-start space-x-8">
                             <div className="text-4xl">💡</div>
@@ -134,12 +165,26 @@ const MockInterviewSession = () => {
                 <div className="lg:col-span-5 space-y-10">
                     <div className="flex flex-col space-y-6">
                         <label className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em]">Neural Response Input</label>
-                        <textarea
-                            value={answer}
-                            onChange={(e) => setAnswer(e.target.value)}
-                            className="w-full p-10 bg-white/10 border border-white/20 rounded-[3rem] text-white font-medium placeholder:text-white/10 outline-none focus:bg-white/[0.15] focus:border-white/40 min-h-[450px] resize-none transition-all shadow-2xl text-xl leading-relaxed backdrop-blur-xl"
-                            placeholder="Type your strategic response here..."
-                        ></textarea>
+                        <div className="relative group">
+                            <textarea
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                                className="w-full p-10 bg-white/10 border border-white/20 rounded-[3rem] text-white font-medium placeholder:text-white/10 outline-none focus:bg-white/[0.15] focus:border-white/40 min-h-[450px] resize-none transition-all shadow-2xl text-xl leading-relaxed backdrop-blur-xl"
+                                placeholder="Type or speak your strategic response here..."
+                            ></textarea>
+                            
+                            <button
+                                onClick={isListening ? stopListening : startListening}
+                                className={`absolute bottom-8 right-8 p-6 rounded-full transition-all active:scale-95 flex items-center justify-center ${
+                                    isListening 
+                                    ? 'bg-red-500 text-white animate-pulse' 
+                                    : 'bg-white text-black hover:bg-gray-200 shadow-xl'
+                                }`}
+                                title={isListening ? "Stop Recording" : "Start Recording"}
+                            >
+                                {isListening ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+                            </button>
+                        </div>
 
                         <div className="pt-6 flex items-center justify-between">
                             <div className="flex flex-col">
