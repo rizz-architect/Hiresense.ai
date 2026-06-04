@@ -75,4 +75,4 @@ The default connection string is `mongodb://localhost:27017/hiresense`.
 - Navigate to **Resume Builder** and fill out the details. Download your generated resume PDF.
 - Navigate to **Mock Interview**, allow camera and microphone permissions, and speak your answers clearly while avoiding switching tabs (which the Proctoring engine records).
 - See your **Dashboard** for data visualization!
-     .
+    
