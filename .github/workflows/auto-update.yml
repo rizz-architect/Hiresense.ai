@@ -20,9 +20,6 @@ jobs:
           git config --global user.email "iamramm8@gmail.com"
           git config --global user.name "Sriram Gandhi S"
           
-          ADD_MSGS=("docs: minor readme update" "docs: update documentation" "docs: readme formatting" "chore: update readme" "docs: improve readme clarity" "docs: polish readme content" "docs: readme micro-update" "chore: readme touch-up" "docs: clean up readme")
-          DEL_MSGS=("docs: remove trailing whitespace" "docs: clean readme formatting" "chore: trim readme" "docs: fix readme spacing" "docs: revert readme changes" "docs: readme cleanup" "chore: readme polish" "docs: remove extra chars" "docs: tidy readme")
-          
           FILES=("TODO.md" "BUGS.md" "testing-notes.txt" "future-updates.md" "dev-notes.md")
           
           # Randomize cycle count between 8 and 11 (16 to 22 commits)
@@ -36,6 +33,70 @@ jobs:
             # Pick a random developer note file to modify
             SELECTED_FILE=${FILES[$RANDOM % ${#FILES[@]}]}
             echo "Starting cycle $i on file: $SELECTED_FILE"
+            
+            # Define project-specific natural commit messages based on file type
+            case "$SELECTED_FILE" in
+              "TODO.md")
+                ADD_MSGS=(
+                  "docs: add speech-to-text API integration steps to todo"
+                  "docs: update ATS resume parsing scoring tasks"
+                  "docs: add AI mock interview evaluation items to checklist"
+                )
+                DEL_MSGS=(
+                  "docs: clean up completed tasks in todo log"
+                  "docs: remove resolved checklist items in todo"
+                  "docs: organize task priorities in todo list"
+                )
+                ;;
+              "BUGS.md")
+                ADD_MSGS=(
+                  "docs: document audio recording permission issues in bugs tracker"
+                  "docs: track JSON parsing mismatch on groq api responses"
+                  "docs: add state management race condition issue to log"
+                )
+                DEL_MSGS=(
+                  "docs: remove resolved bugs from track log"
+                  "docs: clean up closed bug comments"
+                  "docs: normalize formatting of bug tracking file"
+                )
+                ;;
+              "future-updates.md")
+                ADD_MSGS=(
+                  "docs: design roadmap for websocket real-time audio feed"
+                  "docs: add multi-language support draft to future updates"
+                  "docs: outline AI voice feedback module plans"
+                )
+                DEL_MSGS=(
+                  "docs: clean up future updates roadmap formatting"
+                  "docs: refine project updates outline"
+                  "docs: format future updates items"
+                )
+                ;;
+              "testing-notes.txt")
+                ADD_MSGS=(
+                  "test: record API latency test results on groq endpoints"
+                  "test: log local transcription test checks"
+                  "test: document frontend hooks and context testing logs"
+                )
+                DEL_MSGS=(
+                  "test: prune outdated test reports in notes"
+                  "test: clean up testing notes document"
+                  "test: format testing notes"
+                )
+                ;;
+              "dev-notes.md")
+                ADD_MSGS=(
+                  "docs: update API request/response schema specifications"
+                  "docs: document local node dev script dependencies"
+                  "docs: write setup instructions for mock db configuration"
+                )
+                DEL_MSGS=(
+                  "docs: clean up dev environment instructions"
+                  "docs: remove old package script details"
+                  "docs: normalize dev notes styling"
+                )
+                ;;
+            esac
             
             # Step 1: ADD
             echo " " >> $SELECTED_FILE
