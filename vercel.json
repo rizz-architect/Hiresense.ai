@@ -30,14 +30,5 @@
             "dest": "/frontend/index.html"
         }
     ],
-    "git": {
-        "ignoreChanges": [
-            "TODO.md",
-            "BUGS.md",
-            "testing-notes.txt",
-            "future-updates.md",
-            "dev-notes.md",
-            ".github/workflows/**"
-        ]
-    }
+    "ignoreCommand": "! git diff --name-only HEAD^ HEAD | grep -qvE '^(TODO\\.md|BUGS\\.md|testing-notes\\.txt|future-updates\\.md|dev-notes\\.md|\\.github/workflows/)'"
 }
