@@ -30,5 +30,5 @@
             "dest": "/frontend/index.html"
         }
     ],
-    "ignoreCommand": "git diff --name-only HEAD^ HEAD | grep -qvE '^(TODO\\.md|BUGS\\.md|testing-notes\\.txt|future-updates\\.md|dev-notes\\.md|\\.github/workflows/)' && exit 1 || exit 0"
+    "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ':!TODO.md' ':!BUGS.md' ':!testing-notes.txt' ':!future-updates.md' ':!dev-notes.md' ':!.github/workflows/**'"
 }
