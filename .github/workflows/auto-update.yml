@@ -22,9 +22,9 @@ jobs:
           
           FILES=("TODO.md" "BUGS.md" "testing-notes.txt" "future-updates.md" "dev-notes.md")
           
-          # Randomize cycle count between 1 and 2 (2 to 4 commits)
-          MIN_CYCLES=1
-          MAX_CYCLES=2
+          # Randomize cycle count between 3 and 5 (6 to 10 commits)
+          MIN_CYCLES=3
+          MAX_CYCLES=5
           CYCLES=$((MIN_CYCLES + RANDOM % (MAX_CYCLES - MIN_CYCLES + 1)))
           echo "Selected random cycle count: $CYCLES"
           
