@@ -1,4 +1,4 @@
-# 💼 HireSense AI — Intelligent Resume Builder & Smart Mock Interview System
+# HireSense AI — Intelligent Resume Builder & Smart Mock Interview System
 
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
@@ -12,17 +12,17 @@ A complete full-stack web application designed for analyzing resumes, extracting
 
 ---
 
-## 📋 Table of Contents
-- [Overview & Workflow](#-overview--workflow)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [Project Directory Structure](#-project-directory-structure)
-- [Installation & Setup](#-installation--setup)
-- [License & Intellectual Property](#-license--intellectual-property)
+## Table of Contents
+- [Overview & Workflow](#overview--workflow)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Project Directory Structure](#project-directory-structure)
+- [Installation & Setup](#installation--setup)
+- [License & Intellectual Property](#license--intellectual-property)
 
 ---
 
-## 🏗️ Overview & Workflow
+## Overview & Workflow
 
 ```mermaid
 graph TD
@@ -45,31 +45,31 @@ graph TD
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 1. **ATS-Optimized Resume Builder**
+### 1. ATS-Optimized Resume Builder
 *   Multi-step form interface allowing users to dynamically build and refine resume metrics.
 *   **ATS Scoring Engine**: Analyzes key credentials and calculates keyword optimization match percentages.
 *   **PDF Compiler**: Instant local download of formatted resume PDFs.
 
-### 2. **Smart Mock Interview Room**
+### 2. Smart Mock Interview Room
 *   **Interactive Chat Mode**: Switch between Auto and Manual modes to customize question flows.
 *   **Speech-to-Text Engine**: Integrates Web Speech API for high-speed local audio transcription directly in the browser.
 *   **Contextual Logic**: Follow-up questions are dynamically generated based on previous responses.
 
-### 3. **AI-Powered Proctoring Engine**
+### 3. AI-Powered Proctoring Engine
 *   **Tab Switch Detection**: Monitors Candidate focus in real-time utilizing the Page Visibility API.
 *   **Input Protection**: Disables copy, paste, and right-click behaviors to ensure exam integrity.
 *   **Biometric Feed**: Mounts local camera stream to record candidacy status during mock reviews.
 
-### 4. **Candidate Analytics Dashboard**
+### 4. Candidate Analytics Dashboard
 *   Visualizes test metrics using custom-rendered **Chart.js** canvases.
 *   Grades applicants across multiple signals: Technical capability, Communication delivery, and Exam integrity.
 *   Generates a structured 30-day skill development roadmap.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 *   **Frontend**: React.js (Vite), Tailwind CSS, Lucide Icons, Chart.js
 *   **Backend**: Node.js, Express.js
@@ -79,7 +79,7 @@ graph TD
 
 ---
 
-## 📂 Project Directory Structure
+## Project Directory Structure
 
 ```text
 Hiresense/
@@ -100,7 +100,7 @@ Hiresense/
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### Database Configuration
 Ensure MongoDB is running locally or configure a connection string inside the environment variables:
@@ -143,10 +143,10 @@ Ensure MongoDB is running locally or configure a connection string inside the en
 
 ---
 
-## 📄 License & Intellectual Property
+## License & Intellectual Property
 
 **Proprietary Portfolio Project** — All rights reserved by **Sriram Gandhi S**.
 
 This repository is published exclusively for educational review, architectural assessment, and portfolio evaluation. Unauthorized replication, redistribution, commercialization, or modifications of this source code are strictly prohibited without written consent from the author.
 
-*Developed with 💻 by [Sriram Gandhi S](https://github.com/SriramGandhiS).*
+*Developed by [Sriram Gandhi S](https://github.com/SriramGandhiS).*
